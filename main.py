@@ -12,10 +12,10 @@ app = Flask(__name__)
 app.secret_key = 'a6931955dacc453cae352b730334ea9bdab47fce943c5bca'
 
 class User(ndb.Model):
-    name = ndb.StringProperty()
-    username = ndb.StringProperty()
-    password = ndb.StringProperty()
-    salt = ndb.StringProperty()
+	name = ndb.StringProperty()
+	username = ndb.StringProperty()
+	password = ndb.StringProperty()
+	salt = ndb.StringProperty()
 
 	def is_authenticated(self):
 		return True
@@ -46,3 +46,7 @@ def create_user(name, username, password):
 	password_hash = m.hexdigest()
 
 	return User(name=name, username=username, password=password_hash, salt=salt)
+
+@app.route('/')
+def home():
+	return render_template('index.html')
