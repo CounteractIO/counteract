@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+{% include 'header.html' %}
 
-<html>
-  <head>
-    <title>Luma</title>
-  </head>
+<h1>Luma</h1>
+<p>Welcome to Luma.</p>
 
-  <body>
-    <h1>Luma</h1>
-    <p>Welcome to Luma.</p>
-  </body>
-</html>
+{% if current_user.is_authenticated() %}
+<p>Logged in</p>
+{% else %}
+<p>Not logged in</p>
+{% endif %}
+
+{% include 'footer.html' %}
