@@ -5,12 +5,13 @@ import jinja2
 import hashlib
 import random
 import string
+import os
 
 import remodel.connection
 from remodel.models import Model
 
 app = Flask(__name__)
-app.secret_key = 'a6931955dacc453cae352b730334ea9bdab47fce943c5bca'
+app.secret_key = os.urandom(24).encode('hex')
 
 remodel.connection.pool.configure(db='luma')
 
