@@ -6,17 +6,15 @@ import hashlib
 import random
 import string
 
-from google.appengine.ext import ndb
+import remodel.connection
+from remodel.models import Model
 
 app = Flask(__name__)
 app.secret_key = 'a6931955dacc453cae352b730334ea9bdab47fce943c5bca'
 
-class User(ndb.Model):
-	name = ndb.StringProperty()
-	username = ndb.StringProperty()
-	password = ndb.StringProperty()
-	salt = ndb.StringProperty()
+remodel.connection.pool.configure(db='luma')
 
+class User(Model):
 	def is_authenticated(self):
 		return True
 
@@ -27,13 +25,13 @@ class User(ndb.Model):
 		return False
 
 	def get_id(self):
-		return self.username
+		return self['username']
 
 	def check_password_hash(self, form_password):
 		m = hashlib.sha512()
-		m.update(self.salt)
+		m.update(self['salt'])
 		m.update(form_password)
-		return self.password == m.hexdigest()
+		return self['password'] == m.hexdigest()
 
 # Login management
 login_manager = LoginManager()
@@ -50,11 +48,11 @@ def create_user(name, username, password):
 	m.update(password)
 	password_hash = m.hexdigest()
 
-	return User(name=name, username=username, password=password_hash, salt=salt)
+	return User.create(name=name, username=username, password=password_hash, salt=salt)
 
 @login_manager.user_loader
 def load_user(userid):
-	return User.query().filter(User.username == userid).get()
+	return User.get(username=userid)
 
 @app.route('/')
 def home():
@@ -73,6 +71,8 @@ def login():
 				login_user(user, remember=True)
 				return redirect(url_for('home'))
 
+		return render_template('login.html', message='Incorrect username and/or password.')
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -86,7 +86,7 @@ def register():
 
 	elif request.method == 'POST':
 		# Check to see if username is taken
-		user = User.query(User.username == request.form['username']).get()
+		user = User.get(username=request.form['username'])
 
 		if user:
 			return render_template('register.html', message='Username taken')
@@ -95,6 +95,9 @@ def register():
 		username = request.form['username']
 		password = request.form['password']
 		new_user = create_user(name, username, password)
-		new_user.put()
+		new_user.save()
 
 		return render_template('login.html', message='Thank you for creating an account! Please log in with your credentials.')
+
+if __name__ == '__main__':
+	app.run(debug=True)
