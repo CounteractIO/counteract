@@ -13,7 +13,7 @@ from remodel.models import Model
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
-remodel.connection.pool.configure(db='luma')
+remodel.connection.pool.configure(db='athena')
 
 class User(Model):
 	def is_authenticated(self):
