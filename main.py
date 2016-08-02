@@ -10,9 +10,9 @@ import os
 from mongoengine import *
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24).encode('hex')
+app.config.from_object('config')
 
-connect('athena')
+connect(app.config['MONGODB_NAME'], host=app.config['MONGODB_URI'])
 
 class User(Document):
 	name = StringField(required=True, max_length=100)
@@ -105,4 +105,4 @@ def register():
 		return render_template('login.html', message='Thank you for creating an account! Please log in with your credentials.')
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run()
