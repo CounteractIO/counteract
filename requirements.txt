@@ -1,4 +1,3 @@
 Flask
 Flask-Login
-rethinkdb
-remodel
+mongoengine
