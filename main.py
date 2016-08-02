@@ -7,15 +7,19 @@ import random
 import string
 import os
 
-import remodel.connection
-from remodel.models import Model
+from mongoengine import *
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
-remodel.connection.pool.configure(db='athena')
+connect('athena')
 
-class User(Model):
+class User(Document):
+	name = StringField(required=True, max_length=100)
+	username = StringField(required=True)
+	password = StringField(required=True)
+	salt = StringField(required=True)
+
 	def is_authenticated(self):
 		return True
 
@@ -26,13 +30,13 @@ class User(Model):
 		return False
 
 	def get_id(self):
-		return self['username']
+		return self.username
 
 	def check_password_hash(self, form_password):
 		m = hashlib.sha512()
-		m.update(self['salt'])
+		m.update(self.salt)
 		m.update(form_password)
-		return self['password'] == m.hexdigest()
+		return self.password == m.hexdigest()
 
 # Login management
 login_manager = LoginManager()
@@ -49,11 +53,11 @@ def create_user(name, username, password):
 	m.update(password)
 	password_hash = m.hexdigest()
 
-	return User.create(name=name, username=username, password=password_hash, salt=salt)
+	return User(name=name, username=username, password=password_hash, salt=salt)
 
 @login_manager.user_loader
 def load_user(userid):
-	return User.get(username=userid)
+	return User.objects(username=userid).first()
 
 @app.route('/')
 def home():
@@ -87,7 +91,7 @@ def register():
 
 	elif request.method == 'POST':
 		# Check to see if username is taken
-		user = User.get(username=request.form['username'])
+		user = load_user(request.form['username'])
 
 		if user:
 			return render_template('register.html', message='Username taken')
