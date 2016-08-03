@@ -104,5 +104,9 @@ def register():
 
 		return render_template('login.html', message='Thank you for creating an account! Please log in with your credentials.')
 
+@app.route('/heatmap')
+def heatmap():
+	return render_template('heatmap.html')
+
 if __name__ == '__main__':
 	app.run()
