@@ -12,8 +12,6 @@ from mongoengine import *
 app = Flask(__name__)
 app.config.from_object('config')
 
-connect(app.config['MONGODB_NAME'], host=app.config['MONGODB_URI'])
-
 class User(Document):
 	name = StringField(required=True, max_length=100)
 	username = StringField(required=True)
@@ -109,4 +107,5 @@ def heatmap():
 	return render_template('heatmap.html')
 
 if __name__ == '__main__':
+	connect(app.config['MONGODB_NAME'], host=app.config['MONGODB_URI'])
 	app.run()
