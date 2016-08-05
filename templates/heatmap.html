@@ -5,21 +5,51 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="{{ url_for('static', filename='js/datamaps.world.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/heap.js') }}"></script>
 <script>
 var map = new Datamap({
   element: document.getElementById('mapContainer'),
   responsive: true,
+  fills: {
+    RED: '#E84343',
+    defaultFill: '#CFCFCF'
+  },
   done: function(datamap) {
-    datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+    datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
 
     function redraw() {
-      datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
     }
   }
 });
 
 window.addEventListener('resize', function() {
   map.resize();
+});
+
+// Comparison function for tweets based on date
+var cmp = function (a, b) {
+  return a.date.$date - b.date.$date;
+}
+
+// Get JSON of tweets
+var tweetsArray;
+$.getJSON('{{ url_for('static', filename='js/tweets.json') }}', function (data) {
+  var tweets = new Heap(cmp);
+
+  for (t in data) {
+    // Necessary bubble data
+    data[t].radius = data[t].risk_level / 10;
+    data[t].latitude = data[t].location.coordinates[0];
+    data[t].longitude = data[t].location.coordinates[1];
+    var rgbGreenBlue = -2 * data[t].risk_level + 200;
+    data[t].fillKey = 'RED';
+    data[t].borderWidth = 0;
+
+    tweets.push(data[t]);
+  }
+
+  map.bubbles(tweets.toArray());
 });
 </script>
 
