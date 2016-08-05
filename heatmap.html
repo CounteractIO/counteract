@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Athena</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <script src="static/js/jquery-3.1.0.min.js"></script>
+  </head>
+  <body>
+    <div id="mapContainer" style="position: relative; width: 100%; height: 100%"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="static/js/datamaps.world.min.js"></script>
+    <script src="static/js/heap.js"></script>
+    <script>
+    var map = new Datamap({
+      element: document.getElementById('mapContainer'),
+      responsive: true,
+      fills: {
+        RED: '#E84343',
+        defaultFill: '#CFCFCF'
+      },
+      done: function(datamap) {
+        datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
+        function redraw() {
+          datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+        }
+      }
+    });
+    window.addEventListener('resize', function() {
+      map.resize();
+    });
+    // Comparison function for tweets based on date
+    var cmp = function (a, b) {
+      return a.date.$date - b.date.$date;
+    }
+    // Get JSON of tweets
+    var tweetsArray;
+    $.getJSON('static/js/tweets.json', function (data) {
+      var tweets = new Heap(cmp);
+      for (t in data) {
+        // Necessary bubble data
+        data[t].radius = data[t].risk_level / 10;
+        data[t].latitude = data[t].location.coordinates[0];
+        data[t].longitude = data[t].location.coordinates[1];
+        var rgbGreenBlue = -2 * data[t].risk_level + 200;
+        data[t].fillKey = 'RED';
+        data[t].borderWidth = 0;
+        tweets.push(data[t]);
+      }
+      map.bubbles(tweets.toArray());
+    });
+    </script>
+  </body>
+</html>
