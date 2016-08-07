@@ -5,5 +5,4 @@ for detecting susceptibility to terrorist threats. This project will soon be mad
 
 ## Contributors
 
-The following individuals are currently contributing to Athena: Jay Shenoy,
-Kelsey Nieman, Michelle Huang, Andy Kamath, Rufus Behr, and Matt Zhou.
+The following individual is currently contributing to Athena: Andy Kamath
