@@ -43,7 +43,7 @@ def create_user(name, username, password):
 class Tweet(Document):
 	name = StringField(required=True)
 	handle = StringField(required=True)
-	date = DateTimeField(required=True)
+	date = LongField(required=True)
 	num_retweets = IntField(required=True)
 	location = PointField(required=True, null=True)
 	content = StringField(required=True)

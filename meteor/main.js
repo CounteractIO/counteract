@@ -1,8 +1,50 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+var Heap = require('heap');
+
 tweets = new Mongo.Collection('tweet')
 if (Meteor.isClient) {
+    Template.body.onRendered(function () {
+      var map = new Datamap({
+        element: this.find('#myMap'),
+        responsive: true,
+        fills: {
+          RED: '#E84343',
+          defaultFill: '#CFCFCF'
+        },
+        done: function(datamap) {
+          datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
+
+          function redraw() {
+            datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+          }
+        }
+      });
+
+      // Comparison function for tweets based on date
+      var cmp = function (a, b) {
+        return a.date - b.date;
+      }
+
+      var tweetstream = new Heap(cmp);
+
+      tweets.find().observe({
+        added: function (tweet) {
+          // Necessary bubble data
+          tweet.radius = tweet.risk_level / 10;
+          tweet.latitude = tweet.location.coordinates[1];
+          tweet.longitude = tweet.location.coordinates[0];
+          var rgbGreenBlue = -2 * tweet.risk_level + 200;
+          tweet.fillKey = 'RED';
+          tweet.borderWidth = 0;
+
+          tweetstream.push(tweet);
+
+          map.bubbles(tweetstream.toArray());
+        }
+      })
+    });
     Tracker.autorun(function() {
         Meteor.subscribe("tweet");
     });
@@ -10,67 +52,8 @@ if (Meteor.isClient) {
     	main: function() {
     		return 'map'
     	}
-    })
-    Template.map.helpers({
-        tweets: function() {
-            var tweetstream = tweets.find().fetch();
-            console.log(tweetstream)
-
-            var color = [, "rgb(255,65,54)", "rgb(133,20,75)", "rgb(255,133,27)", "lightgrey"],
-                cityLat = [],
-                cityLon = [],
-                hoverText = [],
-                citySize = [],
-                scale = 50000;
-
-            for (var a = 0; a < tweetstream.length; a++) {
-                cityLat.push(tweetstream[a].location.coordinates[1])
-                cityLon.push(tweetstream[a].location.coordinates[0])
-                var i = tweetstream[a]
-                hoverText.push(i.name + " (@" + i.handle + ")<br>" + i.content + "<br>Retweets: " + i.num_retweets + "; Likes: " + i.num_likes)
-                citySize.push(i.risk_level / 10)
-            }
-
-            var data = [{
-                type: 'scattergeo',
-                locationmode: 'USA-states',
-                lat: cityLat,
-                lon: cityLon,
-                hoverinfo: 'text',
-                text: hoverText,
-                marker: {
-                    size: citySize,
-                    line: {
-                        color: 'black',
-                        width: 2
-                    },
-                }
-            }];
-
-            var layout = {
-                title: 'Real-time tweet map',
-                showlegend: false,
-                height: $(window).height() - $(".bar-nav").height(),
-                width: $(window).width(),
-                geo: {
-                    projection: {
-                        type: 'robinson'
-                    }
-                },
-                showland: true,
-                landcolor: 'rgb(217, 217, 217)',
-                subunitwidth: 1,
-                countrywidth: 1,
-                subunitcolor: 'rgb(255,255,255)',
-                countrycolor: 'rgb(255,255,255)'
-            };
-
-            Plotly.plot(document.getElementById('myDiv'), data, layout, {
-                showLink: false
-            });
-
-        }
     });
+
     Template.registerHelper('isIOS', function() {
         return (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
     });
@@ -92,7 +75,7 @@ if (Meteor.isServer) {
         }
     });
     if (tweets.find().count() == 0) {
-        tweets.insert({ myvalue: 'annoyed' });
+        tweets.insert({"name": "ultybs scjhkv", "handle": "zqwvteop", "date": 1470715200000, "num_retweets": 28, "location": {"type": "Point", "coordinates": [-168.11289992853986, 40.92125425551876]}, "content": "miubkotohagiqjurbnydwchbgigpzznkbhlccvvwfbgmwtzebwbzmqysovcjxzburhfmeckrvyomkfmnkeoirnpotmbzydnxcigvkmukornvgiewyhkozuirqshklorwpjssoblztuvr", "risk_level": 86});
     }
 
     Meteor.publish("tweet", function() {

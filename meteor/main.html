@@ -9,7 +9,8 @@
     <header class="bar bar-nav">
         <h1 class="title">Title</h1>
     </header>
-    {{> Template.dynamic template=main}}
+    <div id="myMap"></div>
+    {{> map}}
     <nav class="bar bar-tab">
         <a class="tab-item active" href="#">
             <span class="icon icon-home"></span>
@@ -34,8 +35,8 @@
     </nav>
 </body>
 <template name="map">
-    <div id="myDiv"></div>
-    {{tweets}}
+    <div id="mapContainer"></div>
+    {{ tweets }}
     <script type="text/javascript">
     $("#myDiv").css('margin-top', $(".bar-nav").height())
     </script>

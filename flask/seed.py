@@ -16,7 +16,7 @@ def seed_tweets():
     # Delete all previously generated tweets
     Tweet.objects().delete()
 
-    # Generate 100 random tweets
+    # Generate 1000 random tweets
     for i in range(1000):
         name = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(6)) + ' ' + ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(6))
         handle = ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(8))
@@ -25,8 +25,7 @@ def seed_tweets():
         today = datetime.today()
         start_date = today.replace(day=today.day - 4).toordinal()
         end_date = today.toordinal()
-        date = datetime.fromordinal(random.randint(start_date, end_date))
-
+        date = int(datetime.fromordinal(random.randint(start_date, end_date)).strftime('%s')) * 1000
         num_retweets = random.randint(0, 50)
 
         location = [random.uniform(-180, 180), random.uniform(-90, 90)]
