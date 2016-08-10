@@ -23,7 +23,7 @@ class ViolentStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         name = status.author.name
         handle = status.author.screen_name
-        date = status.created_at
+        date = int(status.created_at.strftime('%s')) * 1000
         num_retweets = status.retweet_count
         location = status.coordinates
         if location is None and status.place is not None:
