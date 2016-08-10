@@ -3,7 +3,7 @@ from geopy.geocoders import Nominatim
 
 import random
 
-from config import consumer_key, consumer_secret, access_token, access_token_secret, username, MONGODB_NAME, MONGODB_URI
+from config import *
 from mongoengine import connect
 from models import Tweet
 
