@@ -29,6 +29,8 @@ if (Meteor.isClient) {
 
       var tweetstream = new Heap(cmp);
 
+      var timeout;
+
       tweets.find().observe({
         added: function (tweet) {
           // Necessary bubble data
@@ -42,6 +44,30 @@ if (Meteor.isClient) {
           tweetstream.push(tweet);
 
           map.bubbles(tweetstream.toArray());
+
+          // Remove tweets from map after they become more than 2 days old
+          var removeOldestTweet = function () {
+            if (tweetstream.empty()) {
+              return;
+            }
+
+            var oldDate = new Date();
+            oldDate.setDate(oldDate.getDate() - 2);
+
+            // Time left before deletion
+            var timeLeft = tweetstream.peek().date - oldDate.valueOf();
+
+            // Clear existing timeout
+            clearTimeout(timeout);
+
+            timeout = setTimeout(function () {
+              tweetstream.pop();
+              map.bubbles(tweetstream.toArray());
+              removeOldestTweet();
+            }, timeLeft);
+          }
+
+          removeOldestTweet();
         }
       })
     });
