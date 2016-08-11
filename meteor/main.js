@@ -1,6 +1,8 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+import Heap from './heap.js'
+
 tweets = new Mongo.Collection('tweet')
 if (Meteor.isClient) {
     Template.body.onRendered(function() {
@@ -25,7 +27,7 @@ if (Meteor.isClient) {
             return a.date - b.date;
         }
 
-        var tweetstream = []
+        var tweetstream = new Heap(cmp);
 
         var timeout;
 
@@ -41,16 +43,7 @@ if (Meteor.isClient) {
 
                 tweetstream.push(tweet);
 
-                map.bubbles(tweetstream, {
-                    popupTemplate: function(geography, data) {
-                        return ['<div class="hoverinfo"><strong>' + data.name + ' (@'+data.handle+')</strong>',
-                            '<br/>Content: ' + data.content + '',
-                            '<br/>Retweets: ' + data.num_retweets + '',
-                            '<br/>Date: ' + data.date + '',
-                            '</div>'
-                        ].join('');
-                    }
-                });
+                map.bubbles(tweetstream.toArray());
 
                 // Remove tweets from map after they become more than 2 days old
                 var removeOldestTweet = function() {
@@ -68,7 +61,8 @@ if (Meteor.isClient) {
                     clearTimeout(timeout);
 
                     timeout = setTimeout(function() {
-                        map.bubbles(tweetstream);
+                        tweetstream.pop();
+                        map.bubbles(tweetstream.toArray());
                         removeOldestTweet();
                     }, timeLeft);
                 }
