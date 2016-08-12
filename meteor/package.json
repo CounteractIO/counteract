@@ -1,11 +1,10 @@
 {
-  "name": "meteor",
+  "name": "counteract",
   "private": true,
   "scripts": {
     "start": "meteor run"
   },
   "dependencies": {
-    "heap": "^0.2.6",
     "meteor-node-stubs": "~0.2.0"
   }
 }

@@ -101,7 +101,7 @@ if (Meteor.isServer) {
         }
     });
     if (tweets.find().count() == 0) {
-        tweets.insert({ "name": "ultybs scjhkv", "handle": "zqwvteop", "date": 1470715200000, "num_retweets": 28, "location": { "type": "Point", "coordinates": [-168.11289992853986, 40.92125425551876] }, "content": "miubkotohagiqjurbnydwchbgigpzznkbhlccvvwfbgmwtzebwbzmqysovcjxzburhfmeckrvyomkfmnkeoirnpotmbzydnxcigvkmukornvgiewyhkozuirqshklorwpjssoblztuvr", "risk_level": 86 });
+        tweets.insert({ "name": "ultybs scjhkv", "handle": "zqwvteop", "date": 1470715200000, "num_retweets": 28, "location": { "type": "Point", "coordinates": [-80.84312669999997, 35.2270869] }, "content": "miubkotohagiqjurbnydwchbgigpzznkbhlccvvwfbgmwtzebwbzmqysovcjxzburhfmeckrvyomkfmnkeoirnpotmbzydnxcigvkmukornvgiewyhkozuirqshklorwpjssoblztuvr", "risk_level": 86 });
     }
 
     Meteor.publish("tweet", function() {
