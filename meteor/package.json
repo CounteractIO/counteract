@@ -1,5 +1,5 @@
 {
-  "name": "counteract",
+  "name": "amaya",
   "private": true,
   "scripts": {
     "start": "meteor run"
