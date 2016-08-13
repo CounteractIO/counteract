@@ -1,5 +1,3 @@
-Flask
-Flask-Login
 mongoengine
 tweepy
 geopy
