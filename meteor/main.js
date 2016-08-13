@@ -1,63 +1,18 @@
-import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var';
-
+import { Meteor } from 'meteor/meteor';
 import Heap from './heap.js'
 
 tweets = new Mongo.Collection('tweet')
 if (Meteor.isClient) {
-
+    
     Template.body.onRendered(function() {
-        // Comparison function for tweets based on date
-        var cmp = function(a, b) {
-            return a.date - b.date;
-        }
-        var tweetstream = new Heap(cmp);
-
-        var timeout;
-
+        tweetstream = []
         tweets.find().observe({
             added: function(tweet) {
-                $("#myMap").html('')
-                var map = new Datamap({
-                    element: document.getElementById('myMap'),
-                    responsive: true,
-                    fills: {
-                        RED: '#E84343',
-                        defaultFill: '#CFCFCF'
-                    },
-                    done: function(datamap) {
-                        datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
-
-                        function redraw() {
-                            datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-                        }
-                    }
-                });
-                // Necessary bubble data
-                tweet.radius = tweet.risk_level / 10;
-                tweet.latitude = tweet.location.coordinates[1];
-                tweet.longitude = tweet.location.coordinates[0];
-                var rgbGreenBlue = -2 * tweet.risk_level + 200;
-                tweet.fillKey = 'RED';
-                tweet.borderWidth = 0;
-
-                tweetstream.push(tweet);
-
-                map.bubbles(tweetstream.toArray());
-
-                // Remove tweets from map after they become more than 2 days old
-                
+                tweetstream.push(tweet)
             }
         })
-    });
-    Tracker.autorun(function() {
-        Meteor.subscribe("tweet");
-    });
-    Template.body.helpers({
-        main: function() {
-            return 'map'
-        }
-    });
+        console.log(tweetstream)
+    })
 }
 if (Meteor.isServer) {
     tweets.allow({

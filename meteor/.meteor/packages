@@ -28,3 +28,4 @@ garrilla:topojson
 geojson-utils
 hyperborea:datamaps
 session
+momentjs:moment
