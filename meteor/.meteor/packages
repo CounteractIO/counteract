@@ -29,3 +29,5 @@ geojson-utils
 hyperborea:datamaps
 session
 momentjs:moment
+zimme:active-route
+kadira:flow-router

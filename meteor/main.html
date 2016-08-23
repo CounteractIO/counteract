@@ -10,7 +10,13 @@
 </head>
 
 <body>
-    <div class="hero">
+    {{>Template.dynamic template=main}}
+    <script type="text/javascript">
+    new WOW().init()
+    </script>
+</body>
+<template name="home">
+    <div class="hero" style="height: 100%">
         <div class="element" align="center">
             <h1 class="title"><span class="wow fadeInUp title" data-wow-delay="1s">C</span><i class="fa fa-repeat spin"></i><span class="wow fadeInUp title" data-wow-delay="1s"><span class="u title">u</span>nteract</span></h1>
             <h4 class="wow fadeInUp" data-wow-delay="1500ms" style="color: #FFF">Fighting terrorism without guns</h4>
@@ -23,8 +29,8 @@
             <div class="container">
                 <h1 class="wow fadeInUp">About <span class="wow fadeInUp title" data-wow-delay="250ms">Counteract</span></h1>
                 <hr style="width: 100px;border-bottom: 5px solid #000" class="wow zoomIn" data-wow-delay="750ms">
-                <h4 class="wow fadeIn" data-wow-delay="1s">What if <span class="wow fadeInUp" data-wow-delay="1500ms">at once</span> <span class="wow fadeInUp" data-wow-delay="2s">you could trace</span><br><br><strong class="wow fadeInUp" data-wow-delay="2500ms">every threat to the United States</strong><br><br><strong class="wow fadeInUp" data-wow-delay="3s">on an open sourced database</strong><br><br><strong class="wow fadeInUp" data-wow-delay="3500ms">at your fingertips?</strong><br><br><span class="wow fadeInUp" data-wow-delay="3750ms">Counteract is an open-source project that helps fight susceptibility to terrorist propaganda by using CNN and NER algorithms on tweets</span></h4>
-                <h4><a href="#demo" class="wow fadeInUp" data-wow-delay="4s">Try it out <i class="fa fa-angle-right"></i></a></h4>
+                <h4 class="wow fadeIn" data-wow-delay="1s"><span class="wow fadeInUp" data-wow-delay="1s">Counteract is a platform that detects and aids mental health patients who pose a high risk of harm to themselves or to other people</span></h4>
+                <h4><a href="#demo" class="wow fadeInUp" data-wow-delay="1500ms">Try it out <i class="fa fa-angle-right"></i></a></h4>
             </div>
         </div>
     </div>
@@ -37,7 +43,7 @@
                 <br>
                 <center>
                     <h5>This is a live demo of the tweets coming into and being processed by our server</h5></center>
-                <div id="myMap" style="border: 1px solid #000;width: 50%;margin-left: 25%" class="wow fadeIn" data-wow-delay="1s"></div>
+                {{>map}}
             </div>
         </div>
     </div>
@@ -61,9 +67,25 @@
             </form>
         </div>
     </div>
-    <script type="text/javascript">
-    new WOW().init()
-    </script>
+</template>
+<template name="vis">
+    <nav>
+        <div class="nav-wrapper hero" style="margin-bottom: 50px;background: #FF2D55">
+            <a href="#" class="brand-logo center">COUNTERACT</a>
+        </div>
+    </nav>
+    <div style="margin-top: 50px;margin-bottom: 50px">
+        <center>
+            <h3 class="title">Real-time Map</h3></center>{{>map}}
+    </div>
+    <div style="margin-bottom: 50px;" align="center">
+        <h3>Tweets and Accounts to Track</h3>
+        <div id="accounts" class="row">
+        </div>
+    </div>
+</template>
+<template name="map">
+    <div id="myMap" style="border: 1px solid #000;width: 50%;margin-left: 25%" class="wow fadeIn" data-wow-delay="1s"></div>
     <script type="text/javascript">
     $("#myMap").css('height', $("#myMap").width() * .6)
     var map = new Datamap({
@@ -99,7 +121,6 @@
     $(".fa-repeat").css('font-size', .6 * $(".u").height())
     Tracker.autorun(function() {
         Meteor.subscribe("tweet", function() {
-            console.log(tweets.find().fetch())
             map.bubbles(tweets.find().fetch(), {
                 popupTemplate: function(geo, data) {
                     return ['<div class="hoverinfo">' + data.name + ' (@' + data.handle + ')',
@@ -110,8 +131,19 @@
                     ].join('');
                 }
             });
+        });
+        Meteor.subscribe("tweets", function() {
+            console.log(tweet.find().fetch())
+            return tweet.find().fetch()
         })
-        console.log(tweets.find().fetch())
+        tweetnow = tweet.find().fetch()
+        tweet.find().observeChanges({
+            added: function(id, doc) {
+                $("#accounts").append('<div class="col s4"><a href="' + doc.tweet + '" style="color: #000"><h6><img src="https://twitter.com/' + doc.handle + '/profile_image?size=normal" style="border-radius: 50%"> @' + doc.handle + '</h6></a></div>')
+            }
+        });
+
+        return tweet.find().fetch()
         map.bubbles(tweets.find().fetch(), {
             popupTemplate: function(geo, data) {
                 return ['<div class="hoverinfo">' + data.name + ' (@' + data.handle + ')',
@@ -124,4 +156,4 @@
         });
     });
     </script>
-</body>
+</template>
