@@ -3,8 +3,11 @@
 Welcome to the repository for Counteract, a crowdsourced risk analysis platform
 for detecting susceptibility to terrorist threats. This project will soon be made open source.
 
-##Demo:
+##Info:
 [counteract.io](http://counteract.io)
+
+##Demo:
+[counteract.io/visualizations](http://counteract.io/vis)
 
 ## Contributors
 
