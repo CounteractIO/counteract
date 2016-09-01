@@ -85,6 +85,7 @@
         </div>
         </div>
     </div>
+    <script type="text/javascript">Session.set('ngrok', prompt('what ngrok?'))</script>
 </template>
 <template name="map">
     <div id="myMap" style="border: 1px solid #000;width: 50%;margin-left: 25%" class="wow fadeIn" data-wow-delay="1s"></div>
@@ -153,13 +154,15 @@
                 console.log(data)
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:5000/tweet",
+                    url: "http://"+Session.get('ngrok')+".ngrok.io/tweet",
                     data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function(result) {
                         alert('Tweeted: @' +$(this).attr('id')+' '+$(this).val())
                     }
                 });
+                alert('Tweeted: @' +$(this).attr('id')+' '+$(this).val())
+                $(this).parent().fadeOut()
             }
         })
         return tweet.find().fetch()
