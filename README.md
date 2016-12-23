@@ -1,3 +1,4 @@
+![logo](http://andykamath.com/counteract.png)
 # Counteract
 
 Welcome to the repository for Counteract, a crowdsourced risk analysis platform
