@@ -21,19 +21,19 @@ trainclass = []
 testtweets = []
 testclass = []
 with open('posts.txt') as f:
-	data = f.readlines()
-	for i, a in enumerate(data):
-		if i < len(data) * .9:
-			traintweets.append(a)
-		else:
-			testtweets.append(a)
+    data = f.readlines()
+    for i, a in enumerate(data):
+        if i < len(data) * .9:
+            traintweets.append(a)
+        else:
+            testtweets.append(a)
 with open('classify.txt') as f:
-	data = f.readlines()
-	for i, a in enumerate(data):
-		if i < len(data) * .9:
-			trainclass.append(a)
-		else:
-			testclass.append(a)
+    data = f.readlines()
+    for i, a in enumerate(data):
+        if i < len(data) * .9:
+            trainclass.append(a)
+        else:
+            testclass.append(a)
 
 # Create feature vectors
 vectorizer = TfidfVectorizer(min_df=5,
