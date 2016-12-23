@@ -8,6 +8,7 @@ for sending nice messages to people who may be having a bad day or show signs of
 We utilized SVM Classification on public tweets to classify tweets as happy/sad, then a Markov chain on encouraging tweets to generate a happy message to tweet at the person who tweeted something sad.
 
 ##Demo:
+The following tweets are 100% generated through our system with no human interference :)
 ![pic1](pic1.png)
 ![pic2](pic2.png)
 ![pic3](pic3.png)
