@@ -38,13 +38,15 @@ def count(list_,element):
 		lc.remove(element)
 		r+=1
 	return r
+
 #represents each sentence as a vector related to its relative frequency of words in the word_list
 def vectorize(sentence, words, word_list):
 	l = []
 	for word in word_list:
 		l.append(count(sentence.split(" "),word)*1.0/len(sentence.split(" "))*1/words.get(word,1)) #adds vector data on relative frequency of word
 	return l
-sentences,words,word_list = sentencify('source.txt')
+
+sentences,words,word_list = sentencify('posts.txt')
 sentence_d = {}
 for sentence in sentences:
 	sentence_d[sentence] = vectorize(sentence,words,word_list)
@@ -53,8 +55,10 @@ print("A series of sentences will be presented to you.")
 print("On a scale from 0-100, indicate the 'positivity' of the statement, where 100 represents an extremely positive statement.")
 print("You will have to hit enter to submit each time. You will also have to hit enter an additional time when all sentences have been prompted.")
 #allows user to rate sentences
-for sentence in sentences:
-	tags[sentence] = input(sentence+"\n")
+with open('classify.txt') as f:
+	for a in f.readlines():
+		for sentence in sentences:
+			tags[sentence] = a
 l_vectors,l_tags = [],[]
 for sentence in sentences:
 	l_vectors.append(sentence_d[sentence])
