@@ -1,3 +1,4 @@
 .DS_Store
 *.py[co]
 config.py
+nlp/config.py
