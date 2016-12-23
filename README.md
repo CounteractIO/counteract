@@ -14,14 +14,14 @@ We utilized SVM Classification on public tweets to classify tweets as happy/sad,
 
 ##File Importance:
 
-posts.txt - A list of tweets we mined with a tweet on each line
-classify.txt - A list of classifications corresponding to posts.txt that we classified as happy/sad
-encouraging.txt - A list of encouraging messages/quotes that we used to train the Markov chain
-requirements.txt - A list of Python requirements required to run our project, along with Scikit-Learn and Numpy
+* posts.txt - A list of tweets we mined with a tweet on each line
+* classify.txt - A list of classifications corresponding to posts.txt that we classified as happy/sad
+* encouraging.txt - A list of encouraging messages/quotes that we used to train the Markov chain
+* requirements.txt - A list of Python requirements required to run our project, along with Scikit-Learn and Numpy
 
-gettweets.py - Our tweet mining file that saved the tweets into posts/classify.txt
-nlp1.py - Our original text classification engine courtesy of [Patrick Demichele](http://github.com/patdemichele)
-index.py - Our main Python file that streams tweets and generates responses to the sad tweets.
+* gettweets.py - Our tweet mining file that saved the tweets into posts/classify.txt
+* nlp1.py - Our original text classification engine courtesy of [Patrick Demichele](http://github.com/patdemichele)
+* index.py - Our main Python file that streams tweets and generates responses to the sad tweets.
 
 ## Contributors
 
