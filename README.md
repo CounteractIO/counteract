@@ -1,8 +1,8 @@
-![logo](http://andykamath.com/counteract.png)
+![logo](http://counteract.io/img/icon.png)
 # Counteract
 
 Welcome to the repository for Counteract, a crowdsourced risk analysis platform
-for sending nice messages to people who may be having a bad day or show signs of mental illness. 
+for sending nice messages to people who may be having a bad day or show signs of threatening behavior to themselves or others. 
 
 ##Info:
 We utilized SVM Classification on public tweets to classify tweets as happy/sad, then a Markov chain on encouraging tweets to generate a happy message to tweet at the person who tweeted something sad.
