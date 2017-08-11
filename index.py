@@ -16,42 +16,26 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 
 api = tweepy.API(auth)
 
-traintweets = []
-trainclass = []
-testtweets = []
-testclass = []
-with open('posts.txt') as f:
-    data = f.readlines()
-    for i, a in enumerate(data):
-        if i < len(data) * .9:
-            traintweets.append(a)
-        else:
-            testtweets.append(a)
-with open('classify.txt') as f:
-    data = f.readlines()
-    for i, a in enumerate(data):
-        if i < len(data) * .9:
-            trainclass.append(a)
-        else:
-            testclass.append(a)
+#Load Hierarchical Attention Network
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+# load weights into new model
+loaded_model.load_weights("model.h5")
+print("Loaded model from disk")
 
-# Create feature vectors
-vectorizer = TfidfVectorizer(min_df=5,
-                             max_df=0.8,
-                             sublinear_tf=True,
-                             use_idf=True)
-trainvec = vectorizer.fit_transform(traintweets)
-testvec = vectorizer.transform(testtweets)
+def clean_str(string):
+    """
+    Tokenization/string cleaning for dataset
+    Every dataset is lower cased except
+    """
+    string = re.sub(r"\\", "", string)    
+    string = re.sub(r"\'", "", string)    
+    string = re.sub(r"\"", "", string)    
+    return string.strip().lower()
 
-# Perform classification with SVM, kernel=linear
-classifier_liblinear = svm.LinearSVC()
-t0 = time.time()
-classifier_liblinear.fit(trainvec, trainclass)
-t1 = time.time()
-prediction_liblinear = classifier_liblinear.predict(testvec)
-t2 = time.time()
-time_liblinear_train = t1 - t0
-time_liblinear_predict = t2 - t1
+from nltk import tokenize
 
 # Train Markov Chain
 with open('encouraging.txt') as f:
@@ -66,10 +50,41 @@ class MyListener(StreamListener):
     def on_data(self, data):
         try:
             new = json.loads(data)['text'].replace('RT ', '')
-            testvec = vectorizer.transform([new])
-            prediction_liblinear = classifier_liblinear.predict(testvec)
+            reviews = []
+            texts = []
 
-            if 's' in prediction_liblinear[0]:
+            text = BeautifulSoup(new)
+            text = clean_str(text.get_text().encode('ascii','ignore'))
+            texts.append(text)
+            sentences = tokenize.sent_tokenize(text)
+            reviews.append(sentences)
+
+            tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
+            tokenizer.fit_on_texts(texts)
+
+            data = np.zeros((len(texts), MAX_SENTS, MAX_SENT_LENGTH), dtype='int32')
+
+            for i, sentences in enumerate(reviews):
+                for j, sent in enumerate(sentences):
+                    if j< MAX_SENTS:
+                        wordTokens = text_to_word_sequence(sent)
+                        k=0
+                        for _, word in enumerate(wordTokens):
+                            if k<MAX_SENT_LENGTH and tokenizer.word_index[word]<MAX_NB_WORDS:
+                                data[i,j,k] = tokenizer.word_index[word]
+                                k=k+1                    
+                                
+            word_index = tokenizer.word_index
+            print('Total %s unique tokens.' % len(word_index))
+
+            print('Shape of data tensor:', data.shape)
+
+            indices = np.arange(data.shape[0])
+            np.random.shuffle(indices)
+            data = data[indices]
+            p = range(0, 2).index(max(loaded_model.predict(data)))
+
+            if p == 1:
                 user = json.loads(data)['user']['screen_name']
                 api.update_status("@" + user + " " + text_model.make_short_sentence(138 - len(user)))
 
