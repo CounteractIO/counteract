@@ -5,7 +5,7 @@ Welcome to the repository for Counteract, a crowdsourced risk analysis platform
 for sending nice messages to people who may be having a bad day or show signs of threatening behavior to themselves or others. 
 
 ## Info:
-We utilized SVM Classification on public tweets to classify tweets as happy/sad, then a Markov chain on encouraging tweets to generate a happy message to tweet at the person who tweeted something sad.
+We utilized (Hierarchical Attention Networks)[https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf] for classification on public tweets to classify tweets as happy/sad, then a Markov chain on encouraging tweets to generate a happy message to tweet at the person who tweeted something sad.
 
 ## Demo:
 The following tweets are 100% generated through our system with no human interference :)
